@@ -6,9 +6,18 @@ import (
 )
 
 func main() {
-	r := gin.Default()
+	router := gin.Default()
 
-	r.Use(middleware.CORSMiddleware())
+	router.Use(middleware.CORSMiddleware())
 
-	r.Run(":9000")
+	apiv1 := router.Group("/api/v1")
+	{
+		apiv1.GET("/ping", func(c *gin.Context) {
+			c.JSON(200, gin.H{
+				"message": "pong",
+			})
+		})
+	}
+
+	router.Run()
 }
