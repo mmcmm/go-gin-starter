@@ -8,32 +8,36 @@ import (
 	"github.com/jackc/pgx"
 	"github.com/mattes/migrate"
 	_ "github.com/mattes/migrate/database/postgres" // for postgress migrations
-	_ "github.com/mattes/migrate/source/file"       // for postgress import from file
+	_ "github.com/mattes/migrate/source/file"       // for postgress migrate from file
+	"github.com/mtdx/case-api/config"
 )
 
 // Init the db connection & run the migrations
 func Init() (conn *pgx.Conn) {
+	cred := config.DbCredentials()
 	absPath, _ := filepath.Abs("db/migrations")
-	m, err := migrate.New("file://"+absPath, "postgres://username:password@localhost:5432/username?sslmode=disable")
+	dbURL := fmt.Sprintf("postgres://%s:%s@%s:5432/%s?sslmode=disable",
+		cred["user"], cred["password"], cred["host"], cred["user"])
+
+	m, err := migrate.New("file://"+absPath, dbURL)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to run migrations: %v\n", err)
 		os.Exit(1)
 	}
 	m.Steps(2)
-
-	return connect("main")
+	return connect("main", cred)
 }
 
-func connect(applicationName string) (conn *pgx.Conn) {
+func connect(applicationName string, cred map[string]string) (conn *pgx.Conn) {
 	var runtimeParams map[string]string
 	runtimeParams = make(map[string]string)
 	runtimeParams["application_name"] = applicationName
 	connConfig := pgx.ConnConfig{
-		User:              "username",
-		Password:          "password",
-		Host:              "localhost",
+		User:              cred["user"],
+		Password:          cred["password"],
+		Host:              cred["host"],
 		Port:              5432,
-		Database:          "username",
+		Database:          cred["user"],
 		TLSConfig:         nil,
 		UseFallbackTLS:    false,
 		FallbackTLSConfig: nil,
