@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/mtdx/case-api/common"
+	"github.com/mtdx/case-api/db"
 	"github.com/mtdx/case-api/middleware"
 )
 
@@ -11,7 +11,7 @@ func main() {
 
 	router.Use(middleware.CORSMiddleware())
 
-	db := common.Connect("main")
+	db := db.Init()
 	defer db.Close()
 
 	apiv1 := router.Group("/api/v1")
