@@ -1,18 +1,27 @@
 package main
 
 import (
+	"time"
+
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/mtdx/case-api/db"
-	"github.com/mtdx/case-api/middleware"
 )
 
 func main() {
 	router := gin.Default()
 
-	router.Use(middleware.CORSMiddleware())
+	// TODO:connect
+	//	db := db.Init()
+	//	defer db.Close()
 
-	db := db.Init()
-	defer db.Close()
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost"},
+		AllowMethods:     []string{"POST", "GET", "PUT", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Authorization", "Accept-Encoding", "X-Requested-With", "Content-Type"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	apiv1 := router.Group("/api/v1")
 	{
