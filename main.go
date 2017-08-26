@@ -7,8 +7,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var router *gin.Engine
+
 func main() {
-	router := gin.Default()
+	router = gin.Default()
 
 	// TODO:connect
 	//	db := db.Init()
@@ -23,14 +25,7 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	apiv1 := router.Group("/api/v1")
-	{
-		apiv1.GET("/ping", func(c *gin.Context) {
-			c.JSON(200, gin.H{
-				"message": "pong",
-			})
-		})
-	}
+	initRoutes()
 
 	router.Run()
 }
