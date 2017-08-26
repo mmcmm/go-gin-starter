@@ -16,10 +16,10 @@ import (
 func Init() (conn *pgx.Conn) {
 	cred := config.DbCredentials()
 	absPath, _ := filepath.Abs("db/migrations")
-	dbURL := fmt.Sprintf("postgres://%s:%s@%s:5432/%s?sslmode=disable",
+	pgURL := fmt.Sprintf("postgres://%s:%s@%s:5432/%s?sslmode=disable",
 		cred["user"], cred["password"], cred["host"], cred["user"])
 
-	m, err := migrate.New("file://"+absPath, dbURL)
+	m, err := migrate.New("file://"+absPath, pgURL)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to run migrations: %v\n", err)
 		os.Exit(1)
