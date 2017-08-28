@@ -20,3 +20,12 @@ func DbCredentials() map[string]string {
 	}
 	return m
 }
+
+// JWTKey ... from env or insecure default
+func JWTKey() string {
+	key := os.Getenv("CASE_JWT_KEY")
+	if key == "" {
+		key = "InsecurePrivateKey"
+	}
+	return key
+}

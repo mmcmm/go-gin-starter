@@ -26,6 +26,8 @@ func performRequest(r http.Handler, method, path string) *httptest.ResponseRecor
 }
 
 func TestHelloWorld(t *testing.T) {
+	t.Parallel()
+
 	body := gin.H{
 		"message": "Hello World!",
 	}
