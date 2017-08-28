@@ -6,9 +6,9 @@ import (
 )
 
 func main() {
-	// TODO:connect
-	//	db := db.Init()
-	//	defer db.Close()
+	
+	db := db.Init()
+	defer db.Close()
 
 	gin.SetMode(gin.ReleaseMode)
 	router := routes.SetupRouter()
