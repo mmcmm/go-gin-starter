@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/gin-contrib/gzip"
+	ratelimit "github.com/gin-contrib/size"
 	"github.com/gin-gonic/gin"
 	"github.com/mtdx/case-api/handlers"
 	"github.com/mtdx/case-api/middleware"
@@ -16,6 +17,8 @@ func initRoutes() {
 
 	// Gzip
 	router.Use(gzip.Gzip(gzip.DefaultCompression))
+	// POST max size, 2MB
+	router.Use(ratelimit.RateLimiter(2 * 1024 * 1024))
 
 	apiv1 := router.Group("/api/v1")
 	{
