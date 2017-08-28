@@ -10,6 +10,8 @@ var router *gin.Engine
 
 func initRoutes() {
 	authMiddleware := middleware.Jwt()
+	// limit simultaneous connections
+	// router.Use(middleware.LimitMax(200))
 
 	apiv1 := router.Group("/api/v1")
 	{
