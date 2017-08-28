@@ -12,9 +12,9 @@ var router *gin.Engine
 
 func initRoutes() {
 	authMiddleware := middleware.Jwt()
+
 	// limit simultaneous connections
 	// router.Use(middleware.LimitMax(200))
-
 	// Gzip
 	router.Use(gzip.Gzip(gzip.DefaultCompression))
 	// POST max size, 2MB
