@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/mtdx/case-api/handlers"
 	"github.com/mtdx/case-api/middleware"
@@ -12,6 +13,9 @@ func initRoutes() {
 	authMiddleware := middleware.Jwt()
 	// limit simultaneous connections
 	// router.Use(middleware.LimitMax(200))
+
+	// Gzip
+	router.Use(gzip.Gzip(gzip.DefaultCompression))
 
 	apiv1 := router.Group("/api/v1")
 	{
