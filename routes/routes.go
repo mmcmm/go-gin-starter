@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mtdx/case-api/handlers"
 	"github.com/mtdx/case-api/middleware"
+	"github.com/mtdx/case-api/steamauth"
 )
 
 var router *gin.Engine
@@ -19,11 +20,14 @@ func initRoutes() {
 	router.Use(gzip.Gzip(gzip.DefaultCompression))
 	// POST max size, 2MB
 	router.Use(ratelimit.RateLimiter(2 * 1024 * 1024))
+	// Database
+	router.Use(middleware.DbConnPool())
+
+	router.GET("/login", steamauth.LoginHandler) // TODO: implement
 
 	apiv1 := router.Group("/api/v1")
 	{
 		apiv1.GET("/", handlers.Index)
-		apiv1.POST("/login", authMiddleware.LoginHandler) // TODO: implement
 		restricted := apiv1.Group("/").Use(authMiddleware.MiddlewareFunc())
 		{
 			restricted.GET("/refresh-token", authMiddleware.RefreshHandler)
@@ -36,7 +40,6 @@ func initRoutes() {
 // SetupRouter ...
 func SetupRouter() *gin.Engine {
 	router = gin.Default()
-
 	initRoutes()
 
 	return router
