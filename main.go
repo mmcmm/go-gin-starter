@@ -7,8 +7,8 @@ import (
 
 func main() {
 	
-	db := db.Init()
-	defer db.Close()
+	dbpool := db.Init()
+	defer dbpool.Close()
 
 	gin.SetMode(gin.ReleaseMode)
 	router := routes.SetupRouter()
