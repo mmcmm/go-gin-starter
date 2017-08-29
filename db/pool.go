@@ -13,7 +13,7 @@ import (
 )
 
 // Init the db connection & run the migrations
-func Init() (conn *pgx.Conn) {
+func Init() (conn *pgx.ConnPool) {
 	cred := config.DbCredentials()
 	absPath, _ := filepath.Abs("db/migrations")
 	pgURL := fmt.Sprintf("postgres://%s:%s@%s:5432/%s?sslmode=disable",
@@ -25,10 +25,10 @@ func Init() (conn *pgx.Conn) {
 		os.Exit(1)
 	}
 	m.Steps(2)
-	return connect("main", cred)
+	return connectPool("main", cred)
 }
 
-func connect(applicationName string, cred map[string]string) (conn *pgx.Conn) {
+func connectPool(applicationName string, cred map[string]string) (conn *pgx.ConnPool) {
 	var runtimeParams map[string]string
 	runtimeParams = make(map[string]string)
 	runtimeParams["application_name"] = applicationName
@@ -43,10 +43,13 @@ func connect(applicationName string, cred map[string]string) (conn *pgx.Conn) {
 		FallbackTLSConfig: nil,
 		RuntimeParams:     runtimeParams,
 	}
-	conn, err := pgx.Connect(connConfig)
+	pool, err := pgx.NewConnPool(pgx.ConnPoolConfig{
+		ConnConfig:     connConfig,
+		MaxConnections: 30,
+	})
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to establish connection: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Unable to establish connection pool: %v\n", err)
 		os.Exit(1)
 	}
-	return conn
+	return pool
 }
