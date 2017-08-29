@@ -6,9 +6,6 @@ import (
 )
 
 func main() {
-	
-	dbpool := db.Init()
-	defer dbpool.Close()
 
 	gin.SetMode(gin.ReleaseMode)
 	router := routes.SetupRouter()
